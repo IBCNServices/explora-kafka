@@ -57,7 +57,7 @@ public class IngestStream {
 
     public static final List<String> METRICS = AppConfig.SUPPORTED_METRICS;
     public static final String GEO_INDEX = System.getenv("GEO_INDEX") != null ? System.getenv("GEO_INDEX") : "geohashing";
-    public static final String READINGS_TOPIC = System.getenv("READINGS_TOPIC") != null ? System.getenv("READINGS_TOPIC") : "cot.airquality";
+    public static final String READINGS_TOPIC = System.getenv("READINGS_TOPIC") != null ? System.getenv("READINGS_TOPIC") : "airquality";
     public static final String APP_NAME = System.getenv("APP_NAME") != null ? System.getenv("APP_NAME") : "explora-ingestion";
     public static final String KBROKERS = System.getenv("KBROKERS") != null ? System.getenv("KBROKERS") : "10.10.139.32:9092";
     public static final String REST_ENDPOINT_HOSTNAME = System.getenv("REST_ENDPOINT_HOSTNAME") != null ? System.getenv("REST_ENDPOINT_HOSTNAME") : "localhost";
@@ -252,7 +252,7 @@ public class IngestStream {
                 (metricId, reading) -> aQMetrics.contains(metricId)
         );
         //.to("cot."+METRIC_ID.replace("::","."), Produced.with(Serdes.String(), aQSerde));
-        //filteredStream.to("cot.airquality-metric-key", Produced.with(Serdes.String(), aQSerde));
+        //filteredStream.to("airquality-metric-key", Produced.with(Serdes.String(), aQSerde));
         //filteredStream.peek((key, reading) -> System.out.println(key + ": " + reading));
         //.print(Printed.toSysOut());
 

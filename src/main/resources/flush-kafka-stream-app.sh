@@ -1,5 +1,5 @@
 export PATH=/usr/lib/kafka/bin:$PATH
-kafka-streams-application-reset.sh --application-id explora-ingestion --to-earliest --input-topics cot.airquality
+kafka-streams-application-reset.sh --application-id explora-ingestion --to-earliest --input-topics airquality
 kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic raw-airquality.no2.number
 kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic view-airquality.no2.number-gh5-min
 kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic view-airquality.no2.number-gh5-hour
