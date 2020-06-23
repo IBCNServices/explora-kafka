@@ -8,7 +8,7 @@ metadata:
 data:
   METRICS: 'airquality.no2::number,airquality.pm10::number'
   READINGS_TOPIC: 'airquality'
-  APP_NAME: 'explora-ingestion'
+  APP_NAME: 'explora-kafka-ingestion'
   KBROKERS: '10.10.139.32:9092'
   GEO_INDEX: 'quadtiling'
   PRECISION: '14'
