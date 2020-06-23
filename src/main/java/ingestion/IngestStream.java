@@ -147,7 +147,7 @@ public class IngestStream {
         System.out.println("Connecting to Kafka cluster via bootstrap servers " + KBROKERS);
         System.out.println("REST endpoint at http://" + endpointHost + ":" + endpointPort);
 
-        final KafkaStreams streams = new KafkaStreams(buildTopology(aQMetrics, readingsTopic, geoIndex, precisionList), streamsConfig("/tmp/explora-kafka-airquality"));
+        final KafkaStreams streams = new KafkaStreams(buildTopology(aQMetrics, readingsTopic, geoIndex, precisionList), streamsConfig("/tmp/"+APP_NAME+"-airquality"));
 
 
         if(cleanup) {
