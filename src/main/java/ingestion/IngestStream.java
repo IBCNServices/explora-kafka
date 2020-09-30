@@ -251,27 +251,6 @@ public class IngestStream {
         ).filter(
                 (metricId, reading) -> aQMetrics.contains(metricId)
         );
-        //.to("cot."+METRIC_ID.replace("::","."), Produced.with(Serdes.String(), aQSerde));
-        //filteredStream.to("airquality-metric-key", Produced.with(Serdes.String(), aQSerde));
-        //filteredStream.peek((key, reading) -> System.out.println(key + ": " + reading));
-        //.print(Printed.toSysOut());
-
-        //final int finalGeohashPrecision = geohashPrecision;
-
-//        KStream<String, AirQualityKeyedReading> airQualityKeyedStream = filteredStream.map(
-//                (metricId, reading) -> KeyValue.pair(reading.getGeohash() + "#" + toFormattedTimestamp(reading.getTimestamp(), ZoneId.systemDefault()), new AirQualityKeyedReading(
-//                        reading.getTsReceivedMs(),
-//                        reading.getMetricId(),
-//                        reading.getTimestamp(),
-//                        reading.getSourceId(),
-//                        reading.getGeohash(),
-//                        reading.getH3Index(),
-//                        reading.getElevation(),
-//                        reading.getValue(),
-//                        reading.getTimeUnit(),
-//                        reading.getGeohash() + "#" + toFormattedTimestamp(reading.getTimestamp(), ZoneId.systemDefault())
-//                ))
-//        );
 
         assert aQMetrics != null;
 
@@ -345,26 +324,6 @@ public class IngestStream {
                                 }
                         ).groupByKey();
 
-//                KGroupedStream<String, AirQualityReading> perYearKeyedStream = filteredStream.selectKey(
-//                        (metricId, reading) -> {
-//                            ZonedDateTime readingDate = ZonedDateTime.ofInstant(Instant.ofEpochMilli(reading.getTimestamp()), ZoneId.systemDefault());
-//                            String yearTimestamp = readingDate.truncatedTo(ChronoUnit.DAYS).withDayOfYear(1).toLocalDateTime().format(DATE_TIME_FORMATTER);
-//                            return reading.getGeohash().substring(0, gh) + "#" + yearTimestamp;
-//                        }
-//                ).groupByKey();
-
-                //perMinKeyedStream.peek((key, reading) -> System.out.println(key + ": " + reading));
-                //perHourKeyedStream.peek((key, reading) -> System.out.println(key + ": " + reading));
-                //perDayKeyedStream.peek((key, reading) -> System.out.println(key + ": " + reading));
-                //perMonthKeyedStream.peek((key, reading) -> System.out.println(key + ": " + reading));
-                //perYearKeyedStream.peek((key, reading) -> System.out.println(key + ": " + reading));
-
-                // Generate KTables with continuous aggregates for each time resolution
-        /*KTable<String, AirQualityReading> airQualityKTable = airQualityKeyedStream.groupByKey().reduce(
-                (aggReading, newReading) -> newReading,
-                Materialized.<String, AirQualityReading, KeyValueStore<Bytes, byte[]>>as("raw-" + finalMetricId.replace("::", ".")).withValueSerde(aQSerde)
-        );*/
-
                 KTable<String, AggregateValueTuple> perMinAggregate = perMinKeyedStream.aggregate(
                         () -> new AggregateValueTuple("", "", 0L, 0L, 0.0, 0.0),
                         (key, value, aggregate) -> airQReadingAggregator(key, value, aggregate),
@@ -389,29 +348,6 @@ public class IngestStream {
                         Materialized.<String, AggregateValueTuple, KeyValueStore<Bytes, byte[]>>as("view-" + aQMetricId.replace("::", ".") + "-gh" + precision + "-month").withValueSerde(aggSerde).withCachingEnabled()
                 );
 
-//            KTable<String, AggregateValueTuple> perYearAggregate = perYearKeyedStream.aggregate(
-//                    () -> new AggregateValueTuple("", "", 0L, 0L, 0.0, 0.0),
-//                    (key, value, aggregate) -> airQReadingAggregator(key, value, aggregate),
-//                    Materialized.<String, AggregateValueTuple, KeyValueStore<Bytes, byte[]>>as("view-" + aQMetricId.replace("::", ".") + "-gh" + gh + "-year").withValueSerde(aggSerde).withCachingEnabled()
-//            );
-
-                // Get streams from KTables to peek into them (to check if they are working as expected)
-
-            /*airQualityKTable.toStream().peek((key, reading) -> System.out.println("[RAW] --" + key + ": " + reading));
-            perMinAggregate.toStream().peek((key, aggregate) -> System.out.println("[MIN] --" + key + ": " + aggregate));
-            perHourAggregate.toStream().peek((key, aggregate) -> System.out.println("[HOUR] --" + key + ": " + aggregate));
-            perDayAggregate.toStream().peek((key, aggregate) -> System.out.println("[DAY] --" + key + ": " + aggregate));
-            perMonthAggregate.toStream().peek((key, aggregate) -> System.out.println("[MONTH] --" + key + ": " + aggregate));
-            perYearAggregate.toStream().peek((key, aggregate) -> System.out.println("[YEAR] --" + key + ": " + aggregate));*/
-
-                // Store KTables as kafka topics (changelog stream)
-
-//            airQualityKeyedStream.to("raw-" + aQMetricId.replace("::", "."), Produced.with(Serdes.String(), aQKSerde));
-//            perMinAggregate.toStream().to("view-" + aQMetricId.replace("::", ".") + "-gh" + gh + "-min", Produced.with(Serdes.String(), aggSerde));
-//            perHourAggregate.toStream().to("view-" + aQMetricId.replace("::", ".") + "-gh" + gh + "-hour", Produced.with(Serdes.String(), aggSerde));
-//            perDayAggregate.toStream().to("view-" + aQMetricId.replace("::", ".") + "-gh" + gh + "-day", Produced.with(Serdes.String(), aggSerde));
-//            perMonthAggregate.toStream().to("view-" + aQMetricId.replace("::", ".") + "-gh" + gh + "-month", Produced.with(Serdes.String(), aggSerde));
-//            perYearAggregate.toStream().to("view-" + aQMetricId.replace("::", ".") + "-gh" + gh + "-year", Produced.with(Serdes.String(), aggSerde));
             }
         }
 

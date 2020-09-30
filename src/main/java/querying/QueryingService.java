@@ -231,13 +231,11 @@ public class QueryingService {
 
     private <T> Response prepareResponse(String aggregate, Map payload, Map metadata, List<String> columns, Boolean local, GenericType<T> keyType){
         if (!local) {
-//                Map<Long, Double> finalResults = new TreeMap<>();
             List data = new ArrayList();
 //            System.out.println("[prepareResponse] Incoming payload: " + payload);
             payload.forEach((key, value) -> {
                 try {
                     data.add(Arrays.asList(key, value.getClass().getField(aggregate).get(value)));
-//                        finalResults.put(key, (Double) value.getClass().getField(aggregate).get(value));
                 } catch (NoSuchFieldException | IllegalAccessException ex) {
                     ex.printStackTrace();
                     Response errorResp = Response.status(Response.Status.BAD_REQUEST)

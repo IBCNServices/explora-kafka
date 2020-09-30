@@ -278,22 +278,6 @@ public class QueryingController {
                         (a1, a2) -> new Aggregate(a1.count + a2.count, a1.sum + a2.sum, (a1.sum + a2.sum)/(a1.count + a2.count)));
             }
         }
-//        final String fromK = StringUtils.rightPad(StringUtils.truncate(geohashPrefix, geohashPrecision), geohashPrecision, "0") + "#" + toFormattedTimestamp(ts, ZoneId.systemDefault());
-//        final String toK = StringUtils.rightPad(StringUtils.truncate(geohashPrefix, geohashPrecision), geohashPrecision, "z") + "#" + toFormattedTimestamp(ts, ZoneId.systemDefault());
-//        System.out.println("fromK: " + fromK);
-//        System.out.println("toK: " + toK);
-//        Map<String, Aggregate> aggregateReadings = new TreeMap<>();
-//        KeyValueIterator<String, AggregateValueTuple> iterator =  viewStore.range(fromK, toK);
-//        while (iterator.hasNext()) {
-//            KeyValue<String, AggregateValueTuple> aggFromStore = iterator.next();
-//            if(!aggFromStore.value.ts.equals(ts)) {
-//                continue;
-//            }
-//            System.out.println("Aggregate for " + aggFromStore.key + ": " + aggFromStore.value);
-//            Aggregate agg = new Aggregate(aggFromStore.value.count, aggFromStore.value.sum, aggFromStore.value.avg);
-//            aggregateReadings.merge(aggFromStore.value.gh, agg,
-//                    (a1, a2) -> new Aggregate(a1.count + a2.count, a1.sum + a2.sum, (a1.sum + a2.sum)/(a1.count + a2.count)));
-//        }
         return aggregateReadings;
     }
 
