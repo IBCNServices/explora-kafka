@@ -23,12 +23,13 @@ This is a Kafka Streams implementation of the [EXPLORA framework](https://www.md
 
 ## Running the server
 
-Use the comands below to run one instance of the server on localhost:7070
+Use the commands below to run one instance of the server on localhost:7070
 
 ``` 
-$ docker build explora-kafka .
+$ docker build -t explora-kafka .
 
 $ docker run --name explora \
+    --network="host" \  
 	-e METRICS="airquality.no2::number,airquality.pm10::number" \
 	-e READINGS_TOPIC="<topic_name>" \
 	-e APP_NAME="explora-ingestion" \
@@ -87,7 +88,7 @@ GET /airquality/{metric_id}/aggregate/{aggregate}/snapshot
 Example:
 
 ```
-curl "http://localhost:7070/api/airquality/airquality.no2::number/aggregate/bbox=51.32,4.09,51.15,4.75&res=day&gh_precision=14&ts=1573167600000"
+curl "http://localhost:7070/api/airquality/airquality.no2::number/aggregate/avg/snapshot?bbox=51.32,4.09,51.15,4.75&res=day&gh_precision=14&ts=1573167600000"
 ```
 
 **Note:** *The platform is only able to provide answers on time intervals for which data has been ingested already, so, for instance, if you start ingesting data from 2020, it won't be able to process queries from previous years.*

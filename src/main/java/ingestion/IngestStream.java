@@ -139,7 +139,7 @@ public class IngestStream {
         }
         catch( Exception exp ) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("CotIngestStream", exp.getMessage(), options,null, true);
+            formatter.printHelp("IngestStream", exp.getMessage(), options,null, true);
         }
 
         final HostInfo restEndpoint = new HostInfo(endpointHost, endpointPort);

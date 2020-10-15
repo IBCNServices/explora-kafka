@@ -6,7 +6,7 @@ metadata:
   labels:
     app: explora-kafka
 data:
-  METRICS: 'airquality.no2::number,airquality.pm10::number'
+  METRICS: 'airquality.no2::number'
   READINGS_TOPIC: 'airquality'
   APP_NAME: 'explora-kafka-ingestion'
   KBROKERS: '10.10.139.32:9092'
@@ -42,7 +42,7 @@ spec:
             name: explora-kafka-env
         image: gitlab.ilabt.imec.be:4567/lordezan/explora-kafka:latest
         command: ["sh"]
-        args: ["-c", "java -cp /usr/local/service/explora-kafka-0.1-jar-with-dependencies.jar ingestion.IngestStream --metric-list ${METRICS} --geo-index ${GEO_INDEX} --precision ${PRECISION} --cleanup"]
+        args: ["-c", "java -cp /usr/local/service/explora-kafka-0.1-jar-with-dependencies.jar ingestion.IngestStream --metric-list=${METRICS} --geo-index=${GEO_INDEX} --precision=${PRECISION} --cleanup"]
         name: explora-kafka
         resources:
           requests:
@@ -52,6 +52,8 @@ spec:
         ports:
         - containerPort: 7070
           name: explora-kafka
+      nodeSelector:
+        explora-env: dev
       restartPolicy: Always
       imagePullSecrets:
         - name: regcred
