@@ -53,6 +53,14 @@ import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.time.DateUtils.truncate;
 
+/**
+ * IngestStream is the class in charge of processing the stream of sensor measurements coming from a Kafka topic.
+ * Aggregation is performed on a spatial and temporal basis, to generate continuous views persisted into RockDB's
+ * key-value stores.
+ *
+ * @author Leandro Ordonez Ante
+ * @version %I%, %G%
+ */
 public class IngestStream {
 
     public static final List<String> METRICS = AppConfig.SUPPORTED_METRICS;
@@ -66,6 +74,13 @@ public class IngestStream {
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd:HHmmss:SSS");
 
 
+    /**
+     * Aggregates the values from a sensor reading into an existing aggregate tuple
+     * @param key The key corresponding to the air quality reading passed as argument
+     * @param value The air quality reading itself
+     * @param aggregate Current state of the aggregate represented as an <pre>AggregateValueTuple</pre> instance
+     * @return <pre>aggregate</pre> incorporating the air quality reading passed as argument
+     */
     private static AggregateValueTuple airQReadingAggregator(String key, AirQualityReading value, AggregateValueTuple aggregate) {
         aggregate.gh_ts = key;
         aggregate.gh = key.split("#")[0];
@@ -177,10 +192,25 @@ public class IngestStream {
         System.exit(0);
     }
 
+    /**
+     * Translates a timestamp (with time zone) into an formatted String representation
+     * @param timestamp
+     * @param zoneId
+     * @return formatted String corresponding to the timestamp following the pattern "yyyyMMdd:HHmmss:SSS"
+     */
     private static String toFormattedTimestamp(Long timestamp, ZoneId zoneId) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(timestamp), zoneId).toLocalDateTime().format(DATE_TIME_FORMATTER);
     }
 
+    /**
+     * Starts a <pre>QueryingService</pre> instance, serving queries on the data corresponding to the
+     * <pre>KafkaStreams</pre> object passed as argument
+     * @param streams <pre>KafkaStreams</pre> object
+     * @param hostInfo <pre>HostInfo</pre> object containing the host name and port of the instance running the Kafka
+     *                 streams application
+     * @return <pre>QueryingService</pre> instance
+     * @throws Exception
+     */
     private static QueryingService startRestProxy(final KafkaStreams streams, final HostInfo hostInfo)
             throws Exception {
         final QueryingService
@@ -189,6 +219,11 @@ public class IngestStream {
         return interactiveQueriesRestService;
     }
 
+    /**
+     * Sets up the configuration properties for the Kafka Streams application
+     * @param stateDir directory in the instance file system where files from the state store are persisted
+     * @return Properties map
+     */
     private static Properties streamsConfig(final String stateDir) {
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, APP_NAME);
@@ -204,6 +239,16 @@ public class IngestStream {
         return props;
     }
 
+    /**
+     * Builds a Kafka Streams <pre>Topology</pre> for a given list of metric Ids (<pre>aQMetrics</pre>), a Kafka topic
+     * (<pre>readingsTopic</pre>), a geo-indexing technique (<pre>geoIndex</pre>: "quadtiling" or "geohashing") and a
+     * list of precision values (<pre>precisionList</pre>).
+     * @param aQMetrics
+     * @param readingsTopic
+     * @param geoIndex
+     * @param precisionList
+     * @return a Kafka Streams <pre>Topology</pre>
+     */
     private static Topology buildTopology(List<String> aQMetrics, String readingsTopic, String geoIndex, List<Integer> precisionList) {
         final StreamsBuilder builder = new StreamsBuilder();
 

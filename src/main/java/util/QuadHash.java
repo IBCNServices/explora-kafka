@@ -44,8 +44,8 @@ public class QuadHash {
     public static List<String> coverBoundingBox(double topLeftLat, double topLeftLon, double bottomRightLat, double bottomRightLon, int zoom) {
         Tile minTile = getTile(bottomRightLat, topLeftLon, zoom);
         Tile maxTile = getTile(topLeftLat, bottomRightLon, zoom);
-        System.out.println("minTile" + minTile);
-        System.out.println("maxTile" + maxTile);
+//        System.out.println("minTile " + minTile);
+//        System.out.println("maxTile " + maxTile);
         return coverBoundingBox(minTile, maxTile);
     }
 }
