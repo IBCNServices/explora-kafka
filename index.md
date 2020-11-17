@@ -1,4 +1,4 @@
-# EXPLORA-Kafka
+# EXPLORA Kafka
 
 This is a Kafka Streams implementation of the [EXPLORA framework](https://www.mdpi.com/1424-8220/20/9/2737).
 
