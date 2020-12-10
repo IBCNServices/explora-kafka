@@ -31,6 +31,8 @@ ENV REST_ENDPOINT_PORT 7070
 EXPOSE $REST_ENDPOINT_PORT
 
 COPY --from=build /usr/local/service/target/explora-kafka-0.1-jar-with-dependencies.jar /usr/local/service/explora-kafka-0.1-jar-with-dependencies.jar
+COPY wait-for-it.sh /wait-for-it.sh
+RUN chmod +x /wait-for-it.sh
 
 CMD ["sh", "-c", "java -cp /usr/local/service/explora-kafka-0.1-jar-with-dependencies.jar ingestion.IngestStream --metric-list=${METRICS} --geo-index=${GEO_INDEX} --precision=${PRECISION} --cleanup"]
 
